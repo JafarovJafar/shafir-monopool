@@ -71,6 +71,20 @@ namespace Shafir.MonoPool
         }
 
         /// <summary>
+        /// Return all objects to pool
+        /// </summary>
+        public static void ReturnAll()
+        {
+            foreach (var objectsList in _objectsDict.Values)
+            {
+                foreach (var poolable in objectsList)
+                {
+                    poolable.DeActivate();
+                }
+            }
+        }
+
+        /// <summary>
         /// Get object from pool
         /// </summary>
         /// <param name="prefab">Goal prefab</param>
