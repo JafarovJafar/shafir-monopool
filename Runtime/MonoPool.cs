@@ -40,6 +40,15 @@ namespace Shafir.MonoPool
         // Dictionary for connecting instantiated items and prefab
         private static Dictionary<IPoolable, IPoolable> _itemToPrefabLink = new Dictionary<IPoolable, IPoolable>();
 
+        private static bool _isInitialized;
+
+        public static void Initialize()
+        {
+            _rootContainer = new GameObject("----- Shafir MonoPool -----").transform;
+            _rootContainer.gameObject.AddComponent<DontDestroyOnLoadComponent>();
+            _isInitialized = true;
+        }
+
         /// <summary>
         /// Fill pool with objects
         /// </summary>
@@ -58,6 +67,20 @@ namespace Shafir.MonoPool
                 // create new item and deactivates it
                 var item = Get(prefab);
                 Return(item);
+            }
+        }
+
+        /// <summary>
+        /// Return all objects to pool
+        /// </summary>
+        public static void ReturnAll()
+        {
+            foreach (var objectsList in _objectsDict.Values)
+            {
+                foreach (var poolable in objectsList)
+                {
+                    poolable.DeActivate();
+                }
             }
         }
 
@@ -130,10 +153,8 @@ namespace Shafir.MonoPool
         // internal method for creating new objects
         private static T CreateItem<T>(T prefab) where T : MonoBehaviour, IPoolable
         {
-            if (_rootContainer == null)
-            {
-                _rootContainer = new GameObject("----- Shafir MonoPool -----").transform;
-            }
+            if (_isInitialized == false)
+                Initialize();
 
             // generates new container if there is no one for prefab
             if (!_containers.TryGetValue(prefab, out var container))
