@@ -44,6 +44,9 @@ namespace Shafir.MonoPool
 
         public static void Initialize()
         {
+            if (_isInitialized == true)
+                return;
+
             _rootContainer = new GameObject("----- Shafir MonoPool -----").transform;
             _rootContainer.gameObject.AddComponent<DontDestroyOnLoadComponent>();
             _isInitialized = true;
